@@ -35,6 +35,7 @@ func init() {
 	validateCmd.MarkFlagRequired("policy-path")
 	validateCmd.Flags().StringVar(&flags.validate.project, "project", "", "Provider project override (override the default project configuration assigned to the google terraform provider when validating resources)")
 	validateCmd.Flags().StringVar(&flags.validate.ancestry, "ancestry", "", "Override the ancestry location of the project when validating resources")
+	validateCmd.Flags().BoolVar(&flags.validate.outputJSON, "output-json", false, "Print violations as JSON")
 	if version.Supported(version.TF12) {
 		validateCmd.Flags().BoolVar(&flags.validate.offline, "offline", false, "Do not connect to GCP API")
 	}
@@ -42,12 +43,15 @@ func init() {
 	convertCmd.Flags().StringVar(&flags.convert.project, "project", "", "Provider project override (override the default project configuration assigned to the google terraform provider when converting resources)")
 	convertCmd.Flags().StringVar(&flags.convert.ancestry, "ancestry", "", "Override the ancestry location of the project when validating resources")
 
-	validateCmd.Flags().BoolVar(&flags.validate.outputJSON, "output-json", false, "Print violations as JSON")
+	simulateCmd.Flags().StringVar(&flags.simulate.project, "project", "", "Provider project override (override the default project configuration assigned to the google terraform provider when validating resources)")
+	simulateCmd.Flags().StringVar(&flags.simulate.ancestry, "ancestry", "", "Override the ancestry location of the project when validating resources")
+	simulateCmd.Flags().BoolVar(&flags.simulate.outputJSON, "output-json", false, "Print simulation results as JSON")
 
 	rootCmd.AddCommand(convertCmd)
 	rootCmd.AddCommand(listSupportedResourcesCmd)
 	rootCmd.AddCommand(validateCmd)
 	rootCmd.AddCommand(versionCmd)
+	rootCmd.AddCommand(simulateCmd)
 }
 
 // NOTE: We use a pkg-level var here instead of github.com/spf13/viper
@@ -67,6 +71,11 @@ var flags struct {
 		ancestry   string
 		offline    bool
 		policyPath string
+		outputJSON bool
+	}
+	simulate struct {
+		project    string
+		ancestry   string
 		outputJSON bool
 	}
 	listSupportedResources struct{}
